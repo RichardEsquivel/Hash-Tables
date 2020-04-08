@@ -19,6 +19,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.length = 0
 
     def _hash(self, key):
         '''
@@ -26,6 +27,7 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
+        #
         return hash(key)
 
     def _hash_djb2(self, key):
@@ -54,26 +56,64 @@ class HashTable:
 
         Fill this in.
         '''
-        # determine the index by passing the hash function the key if there is already a value or it is not none print a warning.
+     # Check if node exists or doesn't and, if key exists replace that value and if it doesn't exist we're attaching a new node to that linked list
+
         index = self._hash_mod(key)
-        if self.storage[index] is not None:
-            print(
-                f"ERROR: A collision has occurred and a value exists at {index}")
+        curr_node = self.storage[index]
+
+        if not curr_node:
+            self.storage[index] = LinkedPair(key, value)
+            self.length += 1
+            if self.length > self.capacity * .66:
+                self.resize()
             return
-        # if no value exists assign the key and value to that index
-        else:
-            self.storage[index] = (key, value)
-            return
+        # node has a value assigned to that key reassign the value to update the key
+        while curr_node:
+            if curr_node == key:
+                curr_node.value = value
+                break
+        # continue on to traverse
+            elif curr_node.next:
+                curr_node = curr_node.next
+        # When you reach None add this new value to the end as a node
+            else:
+                curr_node.next = LinkedPair(key, value)
+                break
+
+        #     print(
+
+        #         f"ERROR: A collision has occurred and a value exists at {index}")
+        #     return
+        # # if no value exists assign the key and value to that index
+        # else:
+        #     self.storage[index] = (key, value)
+        #     return
 
     def remove(self, key):
         '''
         Remove the value stored with the given key.
 
         Print a warning if the key is not found.
-
-        Fill this in.
         '''
-        pass
+        # use same determination of index by passing in the key
+        index = self._hash_mod(key)
+        curr_node = self.storage[index]
+        prev_node = None
+
+        # iterate through the node list looking for the one matching your key
+        while curr_node:
+            # if key matches and there is a previous node make reference to next node skip the current node that matches and have pointer point to node.next
+            if curr_node.key == key:
+                prev_node.next = curr_node.next
+                return None
+            else:
+                (f"ERROR: Given key of {key} was not found")
+            # Traverse the linked list when current node does not match key.
+            if curr_node.key != key:
+                # Before we reach the end of the list continue to traverse
+                while curr_node.next is not None:
+                    prev_node = curr_node
+                    curr_node = curr_node.next
 
     def retrieve(self, key):
         '''
