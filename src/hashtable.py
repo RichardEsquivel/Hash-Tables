@@ -123,7 +123,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        curr_node = self.storage[index]
+        # Traverse the list and if key passed in matches return the value for that key
+        while curr_node:
+            if curr_node.key == key:
+                return curr_node.value
+            # While key does not match continue to traverse if you reach the end of the list
+            # You have not found the key and will return None
+            return None
 
     def resize(self):
         '''
