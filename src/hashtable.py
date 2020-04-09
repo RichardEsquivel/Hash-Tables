@@ -140,7 +140,21 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # Assign variable for what will be old storage area of values in hashtable
+        old_buckets = self.storage
+        # Increase capacity by 2
+        self.capacity *= 2
+        # resize to new capacity self.storage
+        self.storage = [None] * self.capacity
+        # Initialize item pointer to be utilized during the rehash
+        moved_item = None
+        # traverse through previosly hashed items and rehash as you place them into new storage
+        for item in old_buckets:
+            moved_item = item
+            while moved_item:
+                # call in insert in order to rehash key values
+                self.insert(moved_item.key, moved_item.value)
+                moved_item = moved_item.next
 
 
 if __name__ == "__main__":
