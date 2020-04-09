@@ -17,4 +17,3 @@ def minArraySums(arr):
 
 
 print(minArraySums(a))
-

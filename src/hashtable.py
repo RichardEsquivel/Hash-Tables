@@ -59,26 +59,39 @@ class HashTable:
      # Check if node exists or doesn't and, if key exists replace that value and if it doesn't exist we're attaching a new node to that linked list
 
         index = self._hash_mod(key)
-        curr_node = self.storage[index]
 
-        if not curr_node:
-            self.storage[index] = LinkedPair(key, value)
-            self.length += 1
-            if self.length > self.capacity * .66:
-                self.resize()
+        # If there is already a value stored at that index in the hash table add to the Linked List with LinkedPair
+        if self.storage[index] is not None:
+            # We have determined there is a value in this bucket now we will add to the list, create a new node
+            add_node = LinkedPair(key, value)
+        # The current head will be the next node of the new node we are adding
+            add_node.next = self.storage[index]
+        # Reference at index for head of linked list will be the newly created node we just added to the head
+            self.storage[index] = add_node
             return
-        # node has a value assigned to that key reassign the value to update the key
-        while curr_node:
-            if curr_node == key:
-                curr_node.value = value
-                break
-        # continue on to traverse
-            elif curr_node.next:
-                curr_node = curr_node.next
-        # When you reach None add this new value to the end as a node
-            else:
-                curr_node.next = LinkedPair(key, value)
-                break
+        else:
+            # If there is no values stored at that index we will set the value at that index head of Linked list to be the passed in key value pair
+            self.storage[index] = LinkedPair(key, value)
+            return
+
+        # if not curr_node:
+        #     self.storage[index] = LinkedPair(key, value)
+        #     self.length += 1
+        #     if self.length > self.capacity * .66:
+        #         self.resize()
+        #     return
+        # # node has a value assigned to that key reassign the value to update the key
+        # while curr_node:
+        #     if curr_node == key:
+        #         curr_node.value = value
+        #         break
+        # # continue on to traverse
+        #     elif curr_node.next:
+        #         curr_node = curr_node.next
+        # # When you reach None add this new value to the end as a node
+        #     else:
+        #         curr_node.next = LinkedPair(key, value)
+        #         break
 
         #     print(
 
@@ -95,25 +108,25 @@ class HashTable:
 
         Print a warning if the key is not found.
         '''
-        # use same determination of index by passing in the key
+
         index = self._hash_mod(key)
         curr_node = self.storage[index]
         prev_node = None
 
         # iterate through the node list looking for the one matching your key
-        while curr_node:
-            # if key matches and there is a previous node make reference to next node skip the current node that matches and have pointer point to node.next
-            if curr_node.key == key:
-                prev_node.next = curr_node.next
-                return None
-            else:
-                (f"ERROR: Given key of {key} was not found")
-            # Traverse the linked list when current node does not match key.
-            if curr_node.key != key:
-                # Before we reach the end of the list continue to traverse
-                while curr_node.next is not None:
-                    prev_node = curr_node
-                    curr_node = curr_node.next
+        # if key matches and there is a previous node make reference to next node skip the current node that matches and have pointer point to node.next
+        if curr_node.key == key:
+            self.storage[index] = curr_node.next
+
+        if curr_node.key != key:
+            # Before we reach the end of the list continue to traverse
+            while curr_node.next is not None:
+                prev_node = curr_node
+                curr_node = curr_node.next
+                if curr_node.key == key:
+                    prev_node.next = curr_node.next
+                    return None
+            print(f"ERROR: This key {key} was not located")
 
     def retrieve(self, key):
         '''
@@ -131,7 +144,12 @@ class HashTable:
                 return curr_node.value
             # While key does not match continue to traverse if you reach the end of the list
             # You have not found the key and will return None
-            return None
+            elif curr_node != key:
+                while curr_node:
+                    curr_node = curr_node.next
+                    if curr_node.key == key:
+                        return curr_node.value
+                return None
 
     def resize(self):
         '''
